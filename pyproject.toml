@@ -59,3 +59,16 @@ ignore = ["B905"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["sonoloc"]
+
+[tool.mypy]
+python_version = "3.9"
+packages = ["sonoloc"]
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+no_implicit_optional = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
