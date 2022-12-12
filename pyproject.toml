@@ -39,6 +39,9 @@ dev = [
 Homepage = "https://github.com/juliag106/sonoloc"
 Issues = "https://github.com/juliag106/sonoloc/issues"
 
+[project.scripts]
+sonoloc = "sonoloc.cli:main"
+
 [tool.hatch.version]
 path = "sonoloc/version.py"
 
