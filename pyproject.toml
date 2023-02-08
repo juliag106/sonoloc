@@ -64,7 +64,7 @@ ignore = ["B905"]
 known-first-party = ["sonoloc"]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.12"
 packages = ["sonoloc"]
 ignore_missing_imports = true
 check_untyped_defs = true
