@@ -51,3 +51,25 @@ def decode_accdoa(accdoa: np.ndarray, threshold: float = 0.5) -> dict[str, np.nd
         "elevation": elevation,
         "magnitude": magnitude,
     }
+
+
+def encode_multi_accdoa(
+    activity: np.ndarray, azimuth: np.ndarray, elevation: np.ndarray
+) -> np.ndarray:
+    """Multi-ACCDOA 编码，支持每类事件的多个同时轨迹。
+
+    输入形状为 ``(n_frames, n_tracks, n_classes)``，输出
+    ``(n_frames, n_tracks, n_classes, 3)``。轨迹维用于表示同类事件的
+    重叠声源（复调），配合置换不变训练使用。
+    """
+    if activity.ndim != 3:
+        raise ValueError("multi-ACCDOA 需要 (n_frames, n_tracks, n_classes) 形状")
+    unit = sph2cart(azimuth, elevation, 1.0)
+    return unit * activity[..., np.newaxis]
+
+
+def decode_multi_accdoa(accdoa: np.ndarray, threshold: float = 0.5) -> dict[str, np.ndarray]:
+    """解码 multi-ACCDOA 张量，返回逐轨迹的活跃度与方向。"""
+    if accdoa.ndim != 4:
+        raise ValueError("multi-ACCDOA 解码需要 4 维张量")
+    return decode_accdoa(accdoa, threshold=threshold)
