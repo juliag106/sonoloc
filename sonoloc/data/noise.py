@@ -45,9 +45,7 @@ def add_noise_at_snr(
     return signal + scale * noise
 
 
-def apply_diffuse_noise(
-    signal: np.ndarray, snr_db: float, seed: int = 0
-) -> np.ndarray:
+def apply_diffuse_noise(signal: np.ndarray, snr_db: float, seed: int = 0) -> np.ndarray:
     """向多通道信号叠加指定 SNR 的扩散噪声。"""
     rng = np.random.default_rng(seed)
     noise = diffuse_noise(signal.shape, rng)
