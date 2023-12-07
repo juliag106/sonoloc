@@ -7,9 +7,11 @@ import argparse
 import numpy as np
 
 from sonoloc.config import SonolocConfig
+from sonoloc.data.scene import Scene, SoundEvent
+from sonoloc.data.simulate import simulate_scene
 from sonoloc.features.pipeline import FeaturePipeline
 from sonoloc.io.arrays import get_array
-from sonoloc.io.audio import load_audio
+from sonoloc.io.audio import load_audio, save_audio
 from sonoloc.localization.music import music
 from sonoloc.localization.srp_phat import srp_phat
 from sonoloc.version import __version__
@@ -49,6 +51,28 @@ def _cmd_info(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_simulate(args: argparse.Namespace) -> int:
+    config = SonolocConfig(sample_rate=args.sample_rate, array=args.array)
+    array = get_array(config.array)
+    event = SoundEvent(
+        class_index=0,
+        azimuth=np.deg2rad(args.azimuth),
+        elevation=np.deg2rad(args.elevation),
+        onset=0.0,
+        offset=args.duration,
+    )
+    scene = Scene(
+        duration=args.duration,
+        sample_rate=config.sample_rate,
+        n_classes=13,
+        events=[event],
+    )
+    signal, _labels = simulate_scene(scene, array, config, snr_db=args.snr, seed=args.seed)
+    save_audio(args.output, signal, config.sample_rate)
+    print(f"saved {signal.shape[0]}-ch scene -> {args.output}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sonoloc", description="多通道 SELD 工具箱")
     parser.add_argument("--version", action="version", version=f"sonoloc {__version__}")
@@ -72,6 +96,17 @@ def build_parser() -> argparse.ArgumentParser:
     info = sub.add_parser("info", help="打印默认配置与阵列信息")
     info.add_argument("--array", default="tetra")
     info.set_defaults(func=_cmd_info)
+
+    sim = sub.add_parser("simulate", help="生成一个合成的多通道场景")
+    sim.add_argument("output", help="输出 wav 路径")
+    sim.add_argument("--azimuth", type=float, default=30.0, help="方位角（度）")
+    sim.add_argument("--elevation", type=float, default=0.0, help="仰角（度）")
+    sim.add_argument("--duration", type=float, default=2.0, help="时长（秒）")
+    sim.add_argument("--snr", type=float, default=None, help="扩散噪声 SNR（dB）")
+    sim.add_argument("--array", default="tetra")
+    sim.add_argument("--sample-rate", type=int, default=24000)
+    sim.add_argument("--seed", type=int, default=0)
+    sim.set_defaults(func=_cmd_simulate)
 
     return parser
 
