@@ -17,6 +17,4 @@ except ImportError:  # pragma: no cover - 取决于是否安装 torch
 def require_torch() -> None:
     """在需要 torch 的入口处调用，给出清晰的安装提示。"""
     if not HAS_TORCH:  # pragma: no cover
-        raise ImportError(
-            "该功能需要 PyTorch，请先安装：pip install 'sonoloc[torch]'"
-        )
+        raise ImportError("该功能需要 PyTorch，请先安装：pip install 'sonoloc[torch]'")
