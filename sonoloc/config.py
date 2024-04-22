@@ -36,6 +36,14 @@ class SonolocConfig:
     array: str = "tetra"
     extra: dict[str, float] = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        if self.hop_length <= 0 or self.hop_length > self.n_fft:
+            raise ValueError("hop_length 必须在 (0, n_fft] 之间")
+        if self.n_mels <= 0:
+            raise ValueError("n_mels 必须为正")
+        if self.fmax <= self.fmin:
+            raise ValueError("fmax 必须大于 fmin")
+
     @property
     def effective_win_length(self) -> int:
         """未显式指定时，窗长等于 ``n_fft``。"""
