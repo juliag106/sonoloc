@@ -27,7 +27,9 @@ def srp_phat_map(
 
     spec = stft(signal, n_fft=config.n_fft, hop_length=config.hop_length, window=config.window)
     freqs = stft_frequencies(config.sample_rate, config.n_fft)
-    delays = steering_delays(array.positions, grid.directions, config.sound_speed)
+    # 归一化候选方向，避免自定义网格传入非单位向量时产生偏差
+    directions = grid.directions / np.linalg.norm(grid.directions, axis=1, keepdims=True)
+    delays = steering_delays(array.positions, directions, config.sound_speed)
 
     srp = np.zeros(len(grid), dtype=np.float64)
     for i, j in array.pairs():
