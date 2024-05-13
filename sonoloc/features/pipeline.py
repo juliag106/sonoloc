@@ -11,7 +11,7 @@ import numpy as np
 from sonoloc.config import SonolocConfig
 from sonoloc.features.logmel import LogMelExtractor
 from sonoloc.features.stft import stft
-from sonoloc.io.arrays import MicArray, get_array
+from sonoloc.io.geometry import MicArray, get_array
 
 
 class FeaturePipeline:

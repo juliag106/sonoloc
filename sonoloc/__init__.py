@@ -5,8 +5,8 @@ from sonoloc.data.scene import Scene, SoundEvent
 from sonoloc.data.simulate import random_scene, simulate_scene
 from sonoloc.detection.pooling import pool
 from sonoloc.features.pipeline import FeaturePipeline
-from sonoloc.io.arrays import MicArray, get_array, tetrahedral_array
 from sonoloc.io.audio import load_audio, save_audio
+from sonoloc.io.geometry import MicArray, get_array, tetrahedral_array
 from sonoloc.labels.accdoa import decode_accdoa, encode_accdoa
 from sonoloc.localization.music import music
 from sonoloc.localization.srp_phat import srp_phat

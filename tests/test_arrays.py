@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from sonoloc.io.arrays import cart2sph, get_array, sph2cart, tetrahedral_array
+from sonoloc.io.geometry import cart2sph, get_array, sph2cart, tetrahedral_array
 
 
 def test_tetra_has_four_mics() -> None:

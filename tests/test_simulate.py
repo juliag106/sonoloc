@@ -5,7 +5,7 @@ import numpy as np
 from sonoloc.config import SonolocConfig
 from sonoloc.data.scene import Scene, SoundEvent
 from sonoloc.data.simulate import simulate_scene
-from sonoloc.io.arrays import tetrahedral_array
+from sonoloc.io.geometry import tetrahedral_array
 from sonoloc.localization.srp_phat import srp_phat
 
 

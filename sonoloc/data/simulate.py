@@ -12,7 +12,7 @@ import numpy as np
 from sonoloc.config import SonolocConfig
 from sonoloc.data.noise import apply_diffuse_noise
 from sonoloc.data.scene import Scene, SoundEvent
-from sonoloc.io.arrays import MicArray, get_array, sph2cart
+from sonoloc.io.geometry import MicArray, get_array, sph2cart
 
 
 def spatialize(

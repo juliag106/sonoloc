@@ -10,8 +10,8 @@ from sonoloc.config import SonolocConfig
 from sonoloc.data.scene import Scene, SoundEvent
 from sonoloc.data.simulate import simulate_scene
 from sonoloc.features.pipeline import FeaturePipeline
-from sonoloc.io.arrays import get_array
 from sonoloc.io.audio import load_audio, save_audio
+from sonoloc.io.geometry import get_array
 from sonoloc.localization.music import music
 from sonoloc.localization.srp_phat import srp_phat
 from sonoloc.version import __version__

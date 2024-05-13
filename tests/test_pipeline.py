@@ -4,7 +4,7 @@ import numpy as np
 
 from sonoloc.config import SonolocConfig
 from sonoloc.features.pipeline import FeaturePipeline
-from sonoloc.io.arrays import tetrahedral_array
+from sonoloc.io.geometry import tetrahedral_array
 
 
 def test_pipeline_stacked_shape() -> None:

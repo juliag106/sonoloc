@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from sonoloc.config import SonolocConfig
-from sonoloc.io.arrays import MicArray, sph2cart, tetrahedral_array
+from sonoloc.io.geometry import MicArray, sph2cart, tetrahedral_array
 
 
 @pytest.fixture
