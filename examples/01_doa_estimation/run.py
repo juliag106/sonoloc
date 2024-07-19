@@ -32,8 +32,10 @@ def main() -> None:
         srp_az, srp_el = srp_phat(signal, array, config)
         mus_az, mus_el = music(signal, array, config)
         tag = "clean" if snr is None else f"{snr:.0f} dB"
-        print(f"[{tag:>6}] true=({true_az:.0f},{true_el:.0f})  "
-              f"srp=({srp_az:.0f},{srp_el:.0f})  music=({mus_az:.0f},{mus_el:.0f})")
+        print(
+            f"[{tag:>6}] true=({true_az:.0f},{true_el:.0f})  "
+            f"srp=({srp_az:.0f},{srp_el:.0f})  music=({mus_az:.0f},{mus_el:.0f})"
+        )
 
 
 if __name__ == "__main__":
