@@ -12,9 +12,7 @@ import numpy as np
 from sonoloc.io.arrays import cart2sph, sph2cart
 
 
-def encode_accdoa(
-    activity: np.ndarray, azimuth: np.ndarray, elevation: np.ndarray
-) -> np.ndarray:
+def encode_accdoa(activity: np.ndarray, azimuth: np.ndarray, elevation: np.ndarray) -> np.ndarray:
     """把逐帧的活跃度与方向编码为 ACCDOA 向量。
 
     Parameters

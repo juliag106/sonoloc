@@ -42,9 +42,7 @@ def exp_softmax_pool(frame_probs: np.ndarray, axis: int = 0) -> np.ndarray:
     return (weights * frame_probs).sum(axis=axis)
 
 
-def attention_pool(
-    frame_probs: np.ndarray, attention: np.ndarray, axis: int = 0
-) -> np.ndarray:
+def attention_pool(frame_probs: np.ndarray, attention: np.ndarray, axis: int = 0) -> np.ndarray:
     """由外部注意力打分加权的池化。"""
     frame_probs = np.asarray(frame_probs, dtype=np.float64)
     attention = np.asarray(attention, dtype=np.float64)

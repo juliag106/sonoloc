@@ -11,9 +11,7 @@ import numpy as np
 from sonoloc.detection.pooling import pool
 
 
-def clip_probabilities(
-    frame_probs: np.ndarray, method: str = "linear_softmax"
-) -> np.ndarray:
+def clip_probabilities(frame_probs: np.ndarray, method: str = "linear_softmax") -> np.ndarray:
     """把 ``(n_frames, n_classes)`` 概率聚合为 ``(n_classes,)`` 片段概率。"""
     return pool(frame_probs, method=method, axis=0)
 
