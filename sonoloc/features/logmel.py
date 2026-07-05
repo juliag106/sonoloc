@@ -17,6 +17,24 @@ def _mel_to_hz(mel: np.ndarray) -> np.ndarray:
     return 700.0 * (10.0 ** (mel / 2595.0) - 1.0)
 
 
+def mel_filterbank(
+    sample_rate: int, n_fft: int, n_mels: int, fmin: float, fmax: float
+) -> np.ndarray:
+    """构造 ``(n_mels, n_freq)`` 的三角 mel 滤波器组。"""
+    n_freq = n_fft // 2 + 1
+    fft_freqs = np.fft.rfftfreq(n_fft, d=1.0 / sample_rate)
+    lo_mel = _hz_to_mel(np.array(fmin))
+    hi_mel = _hz_to_mel(np.array(fmax))
+    hz_points = _mel_to_hz(np.linspace(lo_mel, hi_mel, n_mels + 2))
+    fb = np.zeros((n_mels, n_freq), dtype=np.float64)
+    for m in range(n_mels):
+        lo, ctr, hi = hz_points[m], hz_points[m + 1], hz_points[m + 2]
+        left = (fft_freqs - lo) / max(ctr - lo, 1e-12)
+        right = (hi - fft_freqs) / max(hi - ctr, 1e-12)
+        fb[m] = np.clip(np.minimum(left, right), 0.0, None)
+    return fb
+
+
 class LogMelExtractor:
     """把（多通道）功率谱转换为 log-mel 特征的可复用提取器。"""
 
@@ -35,21 +53,7 @@ class LogMelExtractor:
         self.fmin = fmin
         self.fmax = fmax if fmax is not None else sample_rate / 2
         self.eps = eps
-
-        # 在构造时一次性建立三角 mel 滤波器组。
-        n_freq = n_fft // 2 + 1
-        fft_freqs = np.fft.rfftfreq(n_fft, d=1.0 / sample_rate)
-        lo_mel = _hz_to_mel(np.array(self.fmin))
-        hi_mel = _hz_to_mel(np.array(self.fmax))
-        mel_points = np.linspace(lo_mel, hi_mel, n_mels + 2)
-        hz_points = _mel_to_hz(mel_points)
-        fb = np.zeros((n_mels, n_freq), dtype=np.float64)
-        for m in range(n_mels):
-            lo, ctr, hi = hz_points[m], hz_points[m + 1], hz_points[m + 2]
-            left = (fft_freqs - lo) / max(ctr - lo, 1e-12)
-            right = (hi - fft_freqs) / max(hi - ctr, 1e-12)
-            fb[m] = np.clip(np.minimum(left, right), 0.0, None)
-        self.filterbank = fb
+        self.filterbank = mel_filterbank(sample_rate, n_fft, n_mels, self.fmin, self.fmax)
 
     def __call__(self, spec: np.ndarray) -> np.ndarray:
         """输入复数 STFT ``(..., n_freq, n_frames)``，输出 log-mel。"""
