@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sonoloc"
+dynamic = ["version"]
+description = "多通道声学事件检测与声源定位（SELD）工具箱"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+
+[tool.hatch.version]
+path = "sonoloc/version.py"
