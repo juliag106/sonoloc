@@ -15,7 +15,9 @@ from dataclasses import dataclass
 import numpy as np
 
 
-def sph2cart(azimuth: np.ndarray, elevation: np.ndarray, radius: np.ndarray | float = 1.0) -> np.ndarray:
+def sph2cart(
+    azimuth: np.ndarray, elevation: np.ndarray, radius: np.ndarray | float = 1.0
+) -> np.ndarray:
     """球坐标（弧度）转笛卡尔坐标，返回形状 ``(..., 3)``。"""
     az = np.asarray(azimuth, dtype=float)
     el = np.asarray(elevation, dtype=float)

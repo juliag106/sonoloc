@@ -39,7 +39,9 @@ class LogMelExtractor:
         # 在构造时一次性建立三角 mel 滤波器组。
         n_freq = n_fft // 2 + 1
         fft_freqs = np.fft.rfftfreq(n_fft, d=1.0 / sample_rate)
-        mel_points = np.linspace(_hz_to_mel(np.array(self.fmin)), _hz_to_mel(np.array(self.fmax)), n_mels + 2)
+        lo_mel = _hz_to_mel(np.array(self.fmin))
+        hi_mel = _hz_to_mel(np.array(self.fmax))
+        mel_points = np.linspace(lo_mel, hi_mel, n_mels + 2)
         hz_points = _mel_to_hz(mel_points)
         fb = np.zeros((n_mels, n_freq), dtype=np.float64)
         for m in range(n_mels):

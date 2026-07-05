@@ -23,7 +23,6 @@ def resample_signal(signal: np.ndarray, orig_sr: int, target_sr: int) -> np.ndar
     return resample_poly(np.asarray(signal, dtype=np.float64), up, down, axis=-1)
 
 
-
 def load_audio(path: str, sample_rate: int | None = None) -> tuple[np.ndarray, int]:
     """读取多通道音频。
 
