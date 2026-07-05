@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from sonoloc.io.arrays import cart2sph, sph2cart
+from sonoloc.io.geometry import cart2sph, sph2cart
 
 
 def encode_accdoa(activity: np.ndarray, azimuth: np.ndarray, elevation: np.ndarray) -> np.ndarray:

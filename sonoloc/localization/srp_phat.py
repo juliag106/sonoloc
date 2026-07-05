@@ -10,7 +10,7 @@ import numpy as np
 
 from sonoloc.config import SonolocConfig
 from sonoloc.features.stft import stft, stft_frequencies
-from sonoloc.io.arrays import MicArray
+from sonoloc.io.geometry import MicArray
 from sonoloc.localization.grid import SphereGrid, make_grid
 from sonoloc.localization.steering import steering_delays
 

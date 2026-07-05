@@ -3,7 +3,7 @@
 import numpy as np
 
 from sonoloc.config import SonolocConfig
-from sonoloc.io.arrays import sph2cart, tetrahedral_array
+from sonoloc.io.geometry import sph2cart, tetrahedral_array
 from sonoloc.localization.music import music, music_map
 
 

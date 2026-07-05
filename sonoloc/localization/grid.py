@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from sonoloc.io.arrays import sph2cart
+from sonoloc.io.geometry import sph2cart
 
 
 @dataclass
