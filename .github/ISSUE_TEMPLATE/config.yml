@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 使用问题与讨论
+    url: https://github.com/juliag106/sonoloc/discussions
+    about: 关于用法、算法或复现的提问，请在 Discussions 中发起。
