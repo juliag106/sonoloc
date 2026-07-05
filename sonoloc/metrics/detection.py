@@ -46,6 +46,11 @@ def segment_detection_scores(
     tp_sum = float(tp.sum())
     fp_sum = float(fp.sum())
     fn_sum = float(fn.sum())
+
+    # 参考与预测均为空时，约定 F 分数为 1（完全一致的空集）。
+    if tp_sum + fp_sum + fn_sum == 0.0:
+        return {"error_rate": 0.0, "f_score": 1.0, "precision": 1.0, "recall": 1.0}
+
     precision = tp_sum / max(tp_sum + fp_sum, 1e-12)
     recall = tp_sum / max(tp_sum + fn_sum, 1e-12)
     f_score = 2 * precision * recall / max(precision + recall, 1e-12)
