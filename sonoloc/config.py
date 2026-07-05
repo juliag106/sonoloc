@@ -6,7 +6,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, fields
+from pathlib import Path
+from typing import Any
+
+import yaml
 
 # 常见的多通道 SELD 默认值，参考 DCASE 任务三的设置。
 DEFAULT_SAMPLE_RATE = 24000
@@ -46,3 +50,26 @@ class SonolocConfig:
     def label_hop(self) -> int:
         """相邻标签帧之间的样本数。"""
         return int(round(self.sample_rate / self.label_rate))
+
+    def to_dict(self) -> dict[str, Any]:
+        """转换为普通字典，便于序列化。"""
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> SonolocConfig:
+        """从字典构造配置，忽略未知字段。"""
+        known = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in data.items() if k in known}
+        return cls(**filtered)
+
+    def save(self, path: str | Path) -> None:
+        """把配置写为 YAML 文件。"""
+        with open(path, "w", encoding="utf-8") as handle:
+            yaml.safe_dump(self.to_dict(), handle, allow_unicode=True, sort_keys=True)
+
+    @classmethod
+    def load(cls, path: str | Path) -> SonolocConfig:
+        """从 YAML 文件读取配置。"""
+        with open(path, encoding="utf-8") as handle:
+            data = yaml.safe_load(handle) or {}
+        return cls.from_dict(data)
