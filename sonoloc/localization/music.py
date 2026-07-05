@@ -40,7 +40,7 @@ def music_map(
         cov = snapshots @ snapshots.conj().T / snapshots.shape[1]
         _eigvals, eigvecs = np.linalg.eigh(cov)
         noise = eigvecs[:, : n_mics - n_sources]  # 最小特征值对应噪声子空间
-        proj = steer[:, f, :] @ noise  # (n_dirs, n_noise)
+        proj = steer[:, f, :].conj() @ noise  # a^H · E_noise，(n_dirs, n_noise)
         denom = np.sum(np.abs(proj) ** 2, axis=1)
         pseudo += 1.0 / (denom + 1e-12)
     return pseudo, grid
