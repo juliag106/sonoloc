@@ -17,8 +17,25 @@ from sonoloc.localization.srp_phat import srp_phat
 from sonoloc.version import __version__
 
 
+def _config_from_args(args: argparse.Namespace) -> SonolocConfig:
+    """从 ``--config`` YAML 或命令行参数构造配置。"""
+    config = SonolocConfig.load(args.config) if getattr(args, "config", None) else SonolocConfig()
+    if getattr(args, "array", None):
+        config.array = args.array
+    if getattr(args, "sample_rate", None):
+        config.sample_rate = args.sample_rate
+    return config
+
+
+def _add_config_args(parser: argparse.ArgumentParser, with_sample_rate: bool = True) -> None:
+    parser.add_argument("--array", default="tetra", help="麦克风阵列预设")
+    parser.add_argument("--config", default=None, help="可选：从 YAML 读取配置")
+    if with_sample_rate:
+        parser.add_argument("--sample-rate", type=int, default=24000)
+
+
 def _cmd_doa(args: argparse.Namespace) -> int:
-    config = SonolocConfig(sample_rate=args.sample_rate, array=args.array)
+    config = _config_from_args(args)
     array = get_array(config.array)
     signal, _sr = load_audio(args.audio, sample_rate=config.sample_rate)
     if args.method == "music":
@@ -30,7 +47,7 @@ def _cmd_doa(args: argparse.Namespace) -> int:
 
 
 def _cmd_features(args: argparse.Namespace) -> int:
-    config = SonolocConfig(sample_rate=args.sample_rate, array=args.array)
+    config = _config_from_args(args)
     array = get_array(config.array)
     signal, _sr = load_audio(args.audio, sample_rate=config.sample_rate)
     features = FeaturePipeline(config, array)(signal)
@@ -42,7 +59,7 @@ def _cmd_features(args: argparse.Namespace) -> int:
 
 
 def _cmd_info(args: argparse.Namespace) -> int:
-    config = SonolocConfig(array=args.array)
+    config = _config_from_args(args)
     array = get_array(config.array)
     print(f"sonoloc {__version__}")
     print(f"sample_rate={config.sample_rate} n_fft={config.n_fft} hop={config.hop_length}")
@@ -52,7 +69,7 @@ def _cmd_info(args: argparse.Namespace) -> int:
 
 
 def _cmd_simulate(args: argparse.Namespace) -> int:
-    config = SonolocConfig(sample_rate=args.sample_rate, array=args.array)
+    config = _config_from_args(args)
     array = get_array(config.array)
     event = SoundEvent(
         class_index=0,
@@ -82,19 +99,17 @@ def build_parser() -> argparse.ArgumentParser:
     doa = sub.add_parser("doa", help="估计单声源方位（DOA）")
     doa.add_argument("audio", help="多通道音频文件路径")
     doa.add_argument("--method", choices=["srp-phat", "music"], default="srp-phat")
-    doa.add_argument("--array", default="tetra", help="麦克风阵列预设")
-    doa.add_argument("--sample-rate", type=int, default=24000)
+    _add_config_args(doa)
     doa.set_defaults(func=_cmd_doa)
 
     feats = sub.add_parser("features", help="提取 log-mel + GCC-PHAT 特征")
     feats.add_argument("audio", help="多通道音频文件路径")
-    feats.add_argument("--array", default="tetra")
-    feats.add_argument("--sample-rate", type=int, default=24000)
     feats.add_argument("--output", default=None, help="可选：保存特征的 .npy 路径")
+    _add_config_args(feats)
     feats.set_defaults(func=_cmd_features)
 
     info = sub.add_parser("info", help="打印默认配置与阵列信息")
-    info.add_argument("--array", default="tetra")
+    _add_config_args(info, with_sample_rate=False)
     info.set_defaults(func=_cmd_info)
 
     sim = sub.add_parser("simulate", help="生成一个合成的多通道场景")
@@ -103,9 +118,8 @@ def build_parser() -> argparse.ArgumentParser:
     sim.add_argument("--elevation", type=float, default=0.0, help="仰角（度）")
     sim.add_argument("--duration", type=float, default=2.0, help="时长（秒）")
     sim.add_argument("--snr", type=float, default=None, help="扩散噪声 SNR（dB）")
-    sim.add_argument("--array", default="tetra")
-    sim.add_argument("--sample-rate", type=int, default=24000)
     sim.add_argument("--seed", type=int, default=0)
+    _add_config_args(sim)
     sim.set_defaults(func=_cmd_simulate)
 
     return parser
