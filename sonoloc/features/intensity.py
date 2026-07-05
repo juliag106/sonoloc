@@ -33,16 +33,19 @@ def intensity_vectors(foa_spec: np.ndarray, eps: float = 1e-10) -> np.ndarray:
 
 
 def intensity_doa(foa_spec: np.ndarray) -> tuple[float, float]:
-    """基于全局有源声强估计单声源的 ``(azimuth, elevation)``（弧度）。"""
+    """基于全局有源声强估计单声源的 ``(azimuth, elevation)``（弧度）。
+
+    采用常见的 Ambisonics 声源编码约定 ``[X, Y, Z] = u · W``，此时有源声强
+    ``Re{W* · [X, Y, Z]}`` 指向声源方向，因此 DOA 与声强方向一致。
+    """
     w = foa_spec[0]
     xyz = foa_spec[1:4]
     intensity = np.real(np.conj(w)[None, ...] * xyz)
     mean_i = intensity.reshape(3, -1).mean(axis=1)
-    direction = -mean_i  # 声源方向与能流方向相反
-    norm = np.linalg.norm(direction)
+    norm = np.linalg.norm(mean_i)
     if norm < 1e-12:
         return 0.0, 0.0
-    direction = direction / norm
+    direction = mean_i / norm
     azimuth = float(np.arctan2(direction[1], direction[0]))
     elevation = float(np.arctan2(direction[2], np.hypot(direction[0], direction[1])))
     return azimuth, elevation
