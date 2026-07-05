@@ -2,7 +2,12 @@
 
 import numpy as np
 
-from sonoloc.labels.accdoa import decode_accdoa, encode_accdoa
+from sonoloc.labels.accdoa import (
+    decode_accdoa,
+    decode_multi_accdoa,
+    encode_accdoa,
+    encode_multi_accdoa,
+)
 
 
 def test_accdoa_round_trip() -> None:
@@ -31,3 +36,25 @@ def test_accdoa_inactive_has_small_magnitude() -> None:
     accdoa = encode_accdoa(activity, az, el)
     decoded = decode_accdoa(accdoa)
     assert not decoded["active"].any()
+
+
+def test_multi_accdoa_round_trip() -> None:
+    n_frames, n_tracks, n_classes = 4, 2, 3
+    rng = np.random.default_rng(5)
+    activity = (rng.random((n_frames, n_tracks, n_classes)) > 0.5).astype(float)
+    az = rng.uniform(-np.pi, np.pi, (n_frames, n_tracks, n_classes))
+    el = rng.uniform(-np.pi / 4, np.pi / 4, (n_frames, n_tracks, n_classes))
+
+    accdoa = encode_multi_accdoa(activity, az, el)
+    assert accdoa.shape == (n_frames, n_tracks, n_classes, 3)
+
+    decoded = decode_multi_accdoa(accdoa)
+    np.testing.assert_array_equal(decoded["active"], activity.astype(bool))
+
+
+def test_multi_accdoa_requires_three_dims() -> None:
+    try:
+        encode_multi_accdoa(np.zeros((4, 3)), np.zeros((4, 3)), np.zeros((4, 3)))
+    except ValueError:
+        return
+    raise AssertionError("2 维输入应触发 ValueError")
