@@ -10,6 +10,7 @@ from __future__ import annotations
 import numpy as np
 
 from sonoloc.config import SonolocConfig
+from sonoloc.data.noise import apply_diffuse_noise
 from sonoloc.data.scene import Scene, SoundEvent
 from sonoloc.io.arrays import MicArray, get_array, sph2cart
 
@@ -51,12 +52,14 @@ def simulate_scene(
     scene: Scene,
     array: MicArray | None = None,
     config: SonolocConfig | None = None,
+    snr_db: float | None = None,
     seed: int = 0,
 ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
     """渲染场景为 ``(signal, labels)``。
 
     ``signal`` 形状 ``(n_mics, n_samples)``；``labels`` 是逐帧的
-    activity / azimuth / elevation 字典。
+    activity / azimuth / elevation 字典。给定 ``snr_db`` 时叠加扩散噪声，
+    用于鲁棒性评测。
     """
     config = config or SonolocConfig()
     array = array or get_array(config.array)
@@ -78,6 +81,9 @@ def simulate_scene(
         buffer[start:end] = source
         # TODO: 引入房间冲激响应以支持混响场景
         signal += spatialize(buffer, array, event.azimuth, event.elevation, sr, config.sound_speed)
+
+    if snr_db is not None:
+        signal = apply_diffuse_noise(signal, snr_db, seed=seed + 1)
 
     labels = scene.label_frames(config.label_rate)
     return signal, labels
